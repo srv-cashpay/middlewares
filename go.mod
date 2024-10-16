@@ -1,4 +1,4 @@
-module github.com/cashpay-middlewares
+module github.com/srv-cashpay/middlewares
 
 go 1.21.0
 
