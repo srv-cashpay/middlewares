@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
 type JWTService interface {
-	GenerateToken(id string, name string, profile_id string) (string, error)
+	GenerateToken(id string, whatsapp string) (string, error)
 	ValidateToken(token string) (*jwt.Token, string, error)
 }
 
 type jwtCustomClaim struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	ProfileID string `json:"profile_id"`
+	ID       string `json:"id"`
+	Whatsapp string `json:"whatsapp"`
 	jwt.StandardClaims
 }
 
@@ -43,13 +41,11 @@ func getSecretKey() string {
 	return secretKey
 }
 
-func (j *jwtService) GenerateToken(id string, name string, profile_id string) (string, error) {
+func (j *jwtService) GenerateToken(id string, whatsapp string) (string, error) {
 	claims := jwt.MapClaims{
 		"id":   id,
-		"name": name,
-		// "exp":  time.Now().Add(2 * time.Hour).Unix(),
-		"exp": time.Now().Add(6 * 24 * time.Hour).Unix(), // Mengatur kedaluwarsa menjadi 6 hari
-		"iss": profile_id,
+		"name": whatsapp,
+		// "iss": profile_id,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 
