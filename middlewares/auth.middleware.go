@@ -49,6 +49,8 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 
 				c.Set("AdminId", id)
 
+				c.Set("LikeId", id)
+
 				return next(c)
 			} else {
 				return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
