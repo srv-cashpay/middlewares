@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -46,8 +47,8 @@ func (j *jwtService) GenerateToken(id string, name string, merchant string) (str
 	claims := jwt.MapClaims{
 		"id":   id,
 		"name": name,
-		// "exp":  time.Now().Add(2 * time.Hour).Unix(),
-		"iss": merchant,
+		"exp":  time.Now().Add(2 * time.Hour).Unix(),
+		"iss":  merchant,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 
