@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/srv-cashpay/util v0.0.0-20241014103742-61d01c932e01
+	github.com/srv-cashpay/util v0.0.0-20241027032732-ad63c2c98116
 )
 
 require (
