@@ -36,7 +36,7 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
 				}
 
-				merchantId, ok := claims["merchant_id"].(string)
+				merchantId, ok := claims["merchant"].(string)
 				if !ok {
 					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
 				}
