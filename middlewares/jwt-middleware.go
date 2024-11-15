@@ -45,10 +45,10 @@ func getSecretKey() string {
 
 func (j *jwtService) GenerateToken(id string, name string, merchant string) (string, error) {
 	claims := jwt.MapClaims{
-		"id":   id,
-		"name": name,
-		"exp":  time.Now().Add(2 * time.Hour).Unix(),
-		"iss":  merchant,
+		"id":       id,
+		"name":     name,
+		"exp":      time.Now().Add(2 * time.Hour).Unix(),
+		"merchant": merchant,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 
