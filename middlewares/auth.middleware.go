@@ -45,6 +45,8 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 				// Set the user name as the CreatedBy value in the context
 				c.Set("DeletedBy", userName)
 
+				c.Set("MerchatId", userName)
+
 				c.Set("UserId", id)
 
 				c.Set("AdminId", id)
