@@ -36,6 +36,11 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
 				}
 
+				merchantId, ok := claims["merchant_id"].(string)
+				if !ok {
+					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
+				}
+
 				// Set the user name as the CreatedBy value in the context
 				c.Set("CreatedBy", userName)
 
@@ -45,7 +50,7 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 				// Set the user name as the CreatedBy value in the context
 				c.Set("DeletedBy", userName)
 
-				c.Set("MerchantId", userName)
+				c.Set("MerchantId", merchantId)
 
 				c.Set("UserId", id)
 
