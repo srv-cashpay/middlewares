@@ -20,7 +20,7 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 			// ValidateToken returns the token, userID, and an error
 			token, _, err := jwtService.ValidateToken(authHeader)
 			if err != nil {
-				refreshToken := c.Request().Header.Get("X-Refresh-Token") // Expect refresh token in the header
+				refreshToken := c.Request().Header.Get("Authorization") // Expect refresh token in the header
 				if refreshToken == "" {
 					return echo.NewHTTPError(http.StatusUnauthorized, "Missing refresh token")
 				}
