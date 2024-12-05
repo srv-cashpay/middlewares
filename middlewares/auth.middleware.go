@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"net/http"
+
 	res "github.com/srv-cashpay/util/s/response"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -18,7 +20,24 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 			// ValidateToken returns the token, userID, and an error
 			token, _, err := jwtService.ValidateToken(authHeader)
 			if err != nil {
-				return res.ErrorBuilder(&res.ErrorConstant.Unauthorized, err).Send(c)
+				refreshToken := c.Request().Header.Get("X-Refresh-Token") // Expect refresh token in the header
+				if refreshToken == "" {
+					return echo.NewHTTPError(http.StatusUnauthorized, "Missing refresh token")
+				}
+				_, userID, err := jwtService.ValidateToken(refreshToken)
+				if err != nil {
+					return echo.NewHTTPError(http.StatusUnauthorized, "Invalid refresh token")
+				}
+
+				accessToken, err := jwtService.GenerateToken(userID, "name", "merchant_id")
+				if err != nil {
+					return echo.NewHTTPError(http.StatusInternalServerError, "Error generating new access token")
+				}
+
+				return c.JSON(http.StatusOK, map[string]string{
+					"access_token": accessToken,
+				})
+
 			}
 
 			// Now you have the token and userID for further processing

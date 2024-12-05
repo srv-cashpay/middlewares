@@ -12,6 +12,7 @@ import (
 
 type JWTService interface {
 	GenerateToken(id string, name string, merchant string) (string, error)
+	GenerateRefreshToken(id string, name string, merchant string) (string, error)
 	ValidateToken(token string) (*jwt.Token, string, error)
 }
 
@@ -47,7 +48,20 @@ func (j *jwtService) GenerateToken(id string, name string, merchant string) (str
 	claims := jwt.MapClaims{
 		"id":       id,
 		"name":     name,
-		"exp":      time.Now().Add(2 * time.Hour).Unix(),
+		"exp":      time.Now().Add(2 * time.Minute).Unix(), // Change expiration to 2 minutes
+		"merchant": merchant,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
+
+	return token.SignedString([]byte(j.secretKey))
+}
+
+// GenerateRefreshToken generates a refresh token with the provided user details
+func (j *jwtService) GenerateRefreshToken(id string, name string, merchant string) (string, error) {
+	claims := jwt.MapClaims{
+		"id":       id,
+		"name":     name,
+		"exp":      time.Now().Add(7 * 24 * time.Hour).Unix(), // Refresh token valid for 7 days
 		"merchant": merchant,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
