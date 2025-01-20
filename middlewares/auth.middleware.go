@@ -34,17 +34,13 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 					return echo.NewHTTPError(http.StatusInternalServerError, "Error generating new access token")
 				}
 
-				return c.JSON(http.StatusOK, map[string]string{
-					"access_token": accessToken,
-				})
+				c.Response().Header().Set("Authorization", "Bearer "+accessToken)
 
-			}
-
-			// Now you have the token and userID for further processing
-			if token.Valid {
+			} else {
+				// Valid token access
 				claims := token.Claims.(jwt.MapClaims)
 
-				// Extract the user name from the JWT claims
+				// Extract user information from claims
 				userName, ok := claims["name"].(string)
 				if !ok {
 					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
@@ -60,27 +56,18 @@ func AuthorizeJWT(jwtService JWTService) echo.MiddlewareFunc {
 					return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
 				}
 
-				// Set the user name as the CreatedBy value in the context
+				// Set user info in context
 				c.Set("CreatedBy", userName)
-
-				// Set the user name as the CreatedBy value in the context
 				c.Set("UpdatedBy", userName)
-
-				// Set the user name as the CreatedBy value in the context
 				c.Set("DeletedBy", userName)
-
 				c.Set("MerchantId", merchantId)
-
 				c.Set("UserId", id)
-
 				c.Set("AdminId", id)
-
 				c.Set("LikeId", id)
-
-				return next(c)
-			} else {
-				return res.ErrorBuilder(&res.ErrorConstant.BadRequest, &res.Error{}).Send(c)
 			}
+
+			// Lanjutkan ke handler berikutnya
+			return next(c)
 		}
 	}
 }
